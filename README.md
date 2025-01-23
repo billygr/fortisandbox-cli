@@ -13,8 +13,7 @@ Locate the following variables at the beginning of the script:
 FORTISANDBOX_URL = ""
 API_TOKEN = ""
 ```
-# TIP:
-I'm using a valid certificate with my Fortisandbox, so you need to replace the "verify=True" to "verify=False" in the *requests* if you don't have one.
+
 
 Set the values:
   
@@ -27,6 +26,8 @@ Set the values:
     ```
     login-token -g
     ```
+
+**Important Note**: I'm using a valid certificate with my Fortisandbox, so you need to replace the "**verify=True**" to "**verify=False**" in the **requests** if you don't have one.
 
 ## Requirements
 
