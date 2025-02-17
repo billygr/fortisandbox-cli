@@ -149,10 +149,10 @@ def get_analysis_status(session, submission_id):
 
 def main():
 
-    parser = argparse.ArgumentParser(description="Sube un archivo a FortiSandbox para su análisis.")
-    parser.add_argument("file_path", help="Ruta completa al archivo a subir")
+    parser = argparse.ArgumentParser(description="Upload a file to FortiSandbox for analysis.")
+    parser.add_argument("file_path", help="Full path to the file to upload")
     parser.add_argument("--forcedvm", help="Forzar escaneo mediante Virtual Machine (0 = No, 1 = Si)?")
-    parser.add_argument("--comments", help="Comentario para el archivo")
+    parser.add_argument("--comments", help="Comment for the file")
     args = parser.parse_args()
 
     session = login(API_TOKEN)
@@ -181,7 +181,7 @@ def main():
         limite_max = 200 * 1024 * 1024  # 200 MB
 
         if limite_min <= tamanio_archivo <= limite_max:
-            print(f"El archivo pesa más de 20 MB ({tamanio_archivo / (1024 * 1024):.2f} MB).")
+            print(f"The file is less than 20 MB ({tamanio_archivo / (1024 * 1024):.2f} MB).")
             filename = args.file_path.split("/")[-1]
             submission_id = upload_big_file(session, args.file_path, forcedvm, comments)
             if not submission_id:
@@ -189,12 +189,12 @@ def main():
             print(f"File uploaded succefully. Submission ID: {submission_id}")
 
         elif tamanio_archivo < limite_min:
-            print(f"El archivo pesa menos de 20 MB ({tamanio_archivo / (1024 * 1024):.2f} MB).")
+            print(f"The file is less than 20 MB ({tamanio_archivo / (1024 * 1024):.2f} MB).")
             filename = args.file_path.split("/")[-1]
             submission_id = upload_file(session, args.file_path, filename, forcedvm, comments)
             if not submission_id:
                 return
-            print(f"File uploaded successfully. Submission ID:: {submission_id}")
+            print(f"File uploaded successfully. Submission ID: {submission_id}")
         else:
             print(f"El archivo es demasiado grande: {tamanio_archivo / (1024 * 1024):.2f} MB. (Máximo permitido: 200 MB)")
             sys.exit()
@@ -213,7 +213,7 @@ def main():
                 print("Details:", status["result"]["data"]["detail_url"])
                 break
             else:
-                print("El análisis está en progreso...")
+                print("Analysis is in progress...")
         time.sleep(10)
 
 if __name__ == "__main__":
