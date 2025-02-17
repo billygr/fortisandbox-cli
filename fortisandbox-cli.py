@@ -3,12 +3,13 @@ import base64
 import json
 import time
 import argparse
-import os 
-import sys 
+import os
+import sys
+import config
 
-# Configuración
-FORTISANDBOX_URL = "https://<CHANGE_ME>/jsonrpc"
-API_TOKEN = '<YOU API TOKEN>'
+# Configuration
+FORTISANDBOX_URL = config.FORTISANDBOX_URL
+API_TOKEN = config.API_TOKEN
 #Hey, ten ojo con el Verify=True en las requests, dejalo en False si no tienes un certificado válido.
 
 def login(api_token):
@@ -30,7 +31,7 @@ def login(api_token):
         result = response.json()
         if result.get("result"):
             return result["session"]
-    print("Error al autenticar:", response.text)
+    print("Error while authenticating:", response.text)
     return None
 
 def upload_big_file(session, file_path, forcedvm, comments):
@@ -42,7 +43,7 @@ def upload_big_file(session, file_path, forcedvm, comments):
         "malpkg": 0,
         "vrecord": "0",
         "forcedvm": forcedvm,
-        "comments": comments,  
+        "comments": comments,
         "enable_ai": 0,
         "archive_password": "",
         "timeout": "3600",
@@ -57,16 +58,16 @@ def upload_big_file(session, file_path, forcedvm, comments):
             "data": (None, json.dumps(data_json), "application/json")
         }
 
-        response = requests.post(FORTISANDBOX_URL, files=files, verify=True) 
+        response = requests.post(FORTISANDBOX_URL, files=files, verify=True)
         if response.status_code == 200:
             result = response.json()
             if result.get("result"):
                 return result["result"]["data"]["sid"]
-        print("Error al subir archivo:", response.text)
+        print("Error uploading file:", response.text)
         return None
 
 def upload_file(session, file_path, filename, forcedvm, comments):
-   
+
     with open(file_path, "rb") as file:
         file_data = base64.b64encode(file.read()).decode()
 
@@ -86,7 +87,7 @@ def upload_file(session, file_path, filename, forcedvm, comments):
                 "timeout": "3600",
                 "vrecord": '0',
                 "enable_ai": '0',
-                "forcedvm": forcedvm, 
+                "forcedvm": forcedvm,
                 "comments": comments
             }
         ],
@@ -99,7 +100,7 @@ def upload_file(session, file_path, filename, forcedvm, comments):
         result = response.json()
         if result.get("result"):
             return result["result"]["data"]["sid"]
-    print("Error al subir archivo:", response.text)
+    print("Error uploading file:", response.text)
     return None
 
 
@@ -120,7 +121,7 @@ def get_submission_jobs(session, submission_id):
     response = requests.post(FORTISANDBOX_URL, json=payload, verify=True)
     if response.status_code == 200:
         return response.json()["result"]["data"]["jids"]
-    print("Error al obtener estado:", response.text)
+    print("Error getting status:", response.text)
     return None
 
 
@@ -175,7 +176,7 @@ def main():
 
     if os.path.exists(args.file_path):
         tamanio_archivo = os.path.getsize(args.file_path)
-        
+
         limite_min = 20 * 1024 * 1024   # 20 MB
         limite_max = 200 * 1024 * 1024  # 200 MB
 
@@ -185,7 +186,7 @@ def main():
             submission_id = upload_big_file(session, args.file_path, forcedvm, comments)
             if not submission_id:
                 return
-            print(f"Archivo subido exitosamente. ID de envío: {submission_id}")
+            print(f"File uploaded succefully. Submission ID: {submission_id}")
 
         elif tamanio_archivo < limite_min:
             print(f"El archivo pesa menos de 20 MB ({tamanio_archivo / (1024 * 1024):.2f} MB).")
@@ -193,7 +194,7 @@ def main():
             submission_id = upload_file(session, args.file_path, filename, forcedvm, comments)
             if not submission_id:
                 return
-            print(f"Archivo subido exitosamente. ID de envío: {submission_id}")
+            print(f"File uploaded successfully. Submission ID:: {submission_id}")
         else:
             print(f"El archivo es demasiado grande: {tamanio_archivo / (1024 * 1024):.2f} MB. (Máximo permitido: 200 MB)")
             sys.exit()
@@ -207,9 +208,9 @@ def main():
         if status:
             analysis_status = status["result"]["status"]["message"]
             if analysis_status == "OK":
-                print("Análisis completado:", status["result"]["status"]["message"])
-                print("Veredicto:", status["result"]["data"]["rating"])
-                print("Detalles:", status["result"]["data"]["detail_url"])
+                print("Analysis completed:", status["result"]["status"]["message"])
+                print("Verdict:", status["result"]["data"]["rating"])
+                print("Details:", status["result"]["data"]["detail_url"])
                 break
             else:
                 print("El análisis está en progreso...")
