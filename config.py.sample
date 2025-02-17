@@ -1,0 +1,3 @@
+# Configuration
+FORTISANDBOX_URL = "https://<CHANGE_ME>/jsonrpc"
+API_TOKEN = '<YOU API TOKEN>'
