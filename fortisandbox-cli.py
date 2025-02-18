@@ -144,14 +144,14 @@ def get_analysis_status(session, submission_id):
         response = requests.post(FORTISANDBOX_URL, json=payload, verify=True)
         if response.status_code == 200:
             return response.json()
-        print("Error al obtener estado:", response.text)
+        print("Error getting status:", response.text)
     return None
 
 def main():
 
     parser = argparse.ArgumentParser(description="Upload a file to FortiSandbox for analysis.")
     parser.add_argument("file_path", help="Full path to the file to upload")
-    parser.add_argument("--forcedvm", help="Forzar escaneo mediante Virtual Machine (0 = No, 1 = Si)?")
+    parser.add_argument("--forcedvm", help="Force scan using Virtual Machine (0 = No, 1 = Yes)?")
     parser.add_argument("--comments", help="Comment for the file")
     args = parser.parse_args()
 
@@ -186,7 +186,7 @@ def main():
             submission_id = upload_big_file(session, args.file_path, forcedvm, comments)
             if not submission_id:
                 return
-            print(f"File uploaded succefully. Submission ID: {submission_id}")
+            print(f"File uploaded successfully. Submission ID: {submission_id}")
 
         elif tamanio_archivo < limite_min:
             print(f"The file is less than 20 MB ({tamanio_archivo / (1024 * 1024):.2f} MB).")
@@ -196,11 +196,11 @@ def main():
                 return
             print(f"File uploaded successfully. Submission ID: {submission_id}")
         else:
-            print(f"El archivo es demasiado grande: {tamanio_archivo / (1024 * 1024):.2f} MB. (Máximo permitido: 200 MB)")
+            print(f"The file is too large: {tamanio_archivo / (1024 * 1024):.2f} MB. (Maximum permitted: 200 MB)")
             sys.exit()
 
     else:
-        print("Error, el archivo no existe.")
+        print("Error, file does not exist")
         sys.exit()
 
     while True:
