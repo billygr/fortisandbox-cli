@@ -10,7 +10,8 @@ import config
 # Configuration
 FORTISANDBOX_URL = config.FORTISANDBOX_URL
 API_TOKEN = config.API_TOKEN
-#Hey, ten ojo con el Verify=True en las requests, dejalo en False si no tienes un certificado válido.
+
+VERIFY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "digicert_root_intermediate.pem")
 
 def login(api_token):
     payload = {
@@ -26,11 +27,14 @@ def login(api_token):
         "ver": "5.0"
     }
 
-    response = requests.post(FORTISANDBOX_URL, json=payload, verify=True)
+    response = requests.post(FORTISANDBOX_URL, json=payload, verify=VERIFY)
     if response.status_code == 200:
         result = response.json()
-        if result.get("result"):
+        status = result.get("result", {}).get("status", {})
+        if status.get("code") == 0:
             return result["session"]
+        print("Error while authenticating:", status.get("message"))
+        return None
     print("Error while authenticating:", response.text)
     return None
 
@@ -58,7 +62,7 @@ def upload_big_file(session, file_path, forcedvm, comments):
             "data": (None, json.dumps(data_json), "application/json")
         }
 
-        response = requests.post(FORTISANDBOX_URL, files=files, verify=True)
+        response = requests.post(FORTISANDBOX_URL, files=files, verify=VERIFY)
         if response.status_code == 200:
             result = response.json()
             if result.get("result"):
@@ -95,7 +99,7 @@ def upload_file(session, file_path, filename, forcedvm, comments):
         "ver": "5.0"
     }
 
-    response = requests.post(FORTISANDBOX_URL, json=payload, verify=True)
+    response = requests.post(FORTISANDBOX_URL, json=payload, verify=VERIFY)
     if response.status_code == 200:
         result = response.json()
         if result.get("result"):
@@ -118,7 +122,7 @@ def get_submission_jobs(session, submission_id):
         "id": 17,
         "ver": "5.0"
     }
-    response = requests.post(FORTISANDBOX_URL, json=payload, verify=True)
+    response = requests.post(FORTISANDBOX_URL, json=payload, verify=VERIFY)
     if response.status_code == 200:
         return response.json()["result"]["data"]["jids"]
     print("Error getting status:", response.text)
@@ -141,7 +145,7 @@ def get_analysis_status(session, submission_id):
             "id": 15,
             "ver": "5.0"
         }
-        response = requests.post(FORTISANDBOX_URL, json=payload, verify=True)
+        response = requests.post(FORTISANDBOX_URL, json=payload, verify=VERIFY)
         if response.status_code == 200:
             return response.json()
         print("Error getting status:", response.text)
