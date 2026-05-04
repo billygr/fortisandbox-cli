@@ -167,7 +167,7 @@ def main():
         if args.forcedvm in ["0","1"]:
             forcedvm = args.forcedvm
         else:
-            print("[!] Valor '--forcedvm' debe ser 0 o 1, se forza o no el scan VM.")
+            print("[!] The value '--forcedvm' must be 0 or 1, whether or not to force the scan to a VM")
             forcedvm = 0
     else:
         forcedvm = 0
@@ -179,28 +179,28 @@ def main():
 
 
     if os.path.exists(args.file_path):
-        tamanio_archivo = os.path.getsize(args.file_path)
+        file_size = os.path.getsize(args.file_path)
 
-        limite_min = 20 * 1024 * 1024   # 20 MB
-        limite_max = 200 * 1024 * 1024  # 200 MB
+        limit_min = 20 * 1024 * 1024   # 20 MB
+        limit_max = 200 * 1024 * 1024  # 200 MB
 
-        if limite_min <= tamanio_archivo <= limite_max:
-            print(f"The file is less than 20 MB ({tamanio_archivo / (1024 * 1024):.2f} MB).")
+        if limit_min <= file_size <= limit_max:
+            print(f"The file is less than 20 MB ({file_size / (1024 * 1024):.2f} MB).")
             filename = args.file_path.split("/")[-1]
             submission_id = upload_big_file(session, args.file_path, forcedvm, comments)
             if not submission_id:
                 return
             print(f"File uploaded successfully. Submission ID: {submission_id}")
 
-        elif tamanio_archivo < limite_min:
-            print(f"The file is less than 20 MB ({tamanio_archivo / (1024 * 1024):.2f} MB).")
+        elif file_size < limit_min:
+            print(f"The file is less than 20 MB ({file_size/ (1024 * 1024):.2f} MB).")
             filename = args.file_path.split("/")[-1]
             submission_id = upload_file(session, args.file_path, filename, forcedvm, comments)
             if not submission_id:
                 return
             print(f"File uploaded successfully. Submission ID: {submission_id}")
         else:
-            print(f"The file is too large: {tamanio_archivo / (1024 * 1024):.2f} MB. (Maximum permitted: 200 MB)")
+            print(f"The file is too large: {file_size/ (1024 * 1024):.2f} MB. (Maximum permitted: 200 MB)")
             sys.exit()
 
     else:
