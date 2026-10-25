@@ -10,12 +10,13 @@ import config
 # Configuration
 FORTISANDBOX_URL = config.FORTISANDBOX_URL
 API_TOKEN = config.API_TOKEN
+LOGIN_METHOD = getattr(config, "LOGIN_METHOD", "get")
 
 VERIFY = os.path.join(os.path.dirname(os.path.abspath(__file__)), "digicert_root_intermediate.pem")
 
 def login(api_token):
     payload = {
-        "method": "get",
+        "method": LOGIN_METHOD,
         "params": [
             {
                 "url" : "/sys/login/token",
