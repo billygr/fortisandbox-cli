@@ -24,13 +24,21 @@ Set the values:
     login-token -g
     ```
 
-**Important Note**: I'm using a valid certificate with my Fortisandbox, so you need to replace the "**verify=True**" to "**verify=False**" in the **requests** if you don't have one.
+**Important Note**: https encryption is enforced 
 
 ## Requirements
 
 - Python 3.7+
+- Python virtual environment is preferable 
 - Access to your FortiSandbox URL
 - A valid API token
+
+## Python Virtual Enviroment
+```
+python3 -mvenv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+```
 
 ## Syntax
 
@@ -51,14 +59,14 @@ At the moment the script only scans files smaller than 200mb with or without VM.
 ```
 usage: fortisandbox-cli.py [-h] [--forcedvm FORCEDVM] [--comments COMMENTS] file_path
 
-Sube un archivo a FortiSandbox para su análisis.
+Upload a file to FortiSandbox for analysis.
 
 positional arguments:
   file_path            Ruta completa al archivo a subir
 
 options:
   -h, --help           show this help message and exit
-  --forcedvm FORCEDVM  Forzar escaneo mediante Virtual Machine (0 = No, 1 = Si)
-  --comments COMMENTS  Comentario para el archivo
+  --forcedvm FORCEDVM  Force scan using Virtual Machine (0 = No, 1 = Yes)
+  --comments COMMENTS  Comment for the file
 ```
 
